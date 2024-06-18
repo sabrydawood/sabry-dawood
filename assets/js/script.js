@@ -1,5 +1,5 @@
 "use strict";
-const NavbBarButtons = ["About", "Projects", "Blog", "Contact"];
+const NavbBarButtons = ["About", "Projects", "Blog", "Contact", "Cv"];
 
 window.addEventListener("DOMContentLoaded", function () {
   const { Projects, Skills, Services, SocialMedia, ContactData } = siteData;
