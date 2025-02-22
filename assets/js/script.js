@@ -2,13 +2,42 @@
 const NavbBarButtons = ["About", "Projects", "Blog", "Contact", "Cv"];
 
 window.addEventListener("DOMContentLoaded", function () {
-  const { Projects, Skills, Services, SocialMedia, ContactData } = siteData;
-  const navbarList = document.getElementById("navbarList");
-  const contactList = document.getElementById("contactList");
-  const socialList = document.getElementById("socialList");
-  const projectsList = document.getElementById("projectList");
-  const skillList = document.getElementById("skillsList");
-  const serviceList = document.getElementById("serviceList");
+  const {
+    Projects,
+    Skills,
+    Services,
+    SocialMedia,
+    ContactData,
+    Main,
+    Blog,
+    SEO,
+  } = siteData;
+  const navbarList = document.getElementById("navbarList"),
+    ContactList = document.getElementById("ContactList"),
+    SocialList = document.getElementById("SocialList"),
+    ProjectsList = document.getElementById("ProjectList"),
+    SkillList = document.getElementById("SkillsList"),
+    ServiceList = document.getElementById("ServiceList"),
+    BlogList = document.getElementById("BlogList"),
+    FullName = document.getElementById("Name"),
+    ProfilePic = document.getElementById("ProfilePic"),
+    FullJobTitle = document.getElementById("JobTitle"),
+    AboutDesc1 = document.getElementById("About-Desc-1"),
+    AboutDesc2 = document.getElementById("About-Desc-2");
+  if (Main) {
+    const { Name, JobTitle, Description1, Description2, Avatar } = Main;
+    if (Name && FullName) {
+      FullName.innerText = Name;
+    }
+    if (ProfilePic && Avatar) {
+      ProfilePic.src = Avatar;
+      ProfilePic.alt = Name;
+    }
+    if (JobTitle && FullJobTitle) FullJobTitle.innerText = JobTitle;
+    if (Description1 && AboutDesc1) AboutDesc1.innerText = Description1;
+    if (Description2 && AboutDesc2) AboutDesc2.innerText = Description2;
+  }
+
   if (NavbBarButtons.length) {
     NavbBarButtons.map((button, index) => {
       const li = document.createElement("li");
@@ -35,7 +64,7 @@ window.addEventListener("DOMContentLoaded", function () {
           <a rel="noopener" target="_blank" href="${contact.link}" class="contact-link">${contact.value}</a>
         </div>
       `;
-      contactList.appendChild(li);
+      ContactList.appendChild(li);
     });
   }
   if (SocialMedia.length) {
@@ -47,7 +76,7 @@ window.addEventListener("DOMContentLoaded", function () {
           <ion-icon name="${social.icon}"></ion-icon>
         </a>
       `;
-      socialList.appendChild(li);
+      SocialList.appendChild(li);
     });
   }
   if (Projects.length) {
@@ -67,7 +96,7 @@ window.addEventListener("DOMContentLoaded", function () {
           <h3 class="project-title">${project.name}</h3>
         </a>
       `;
-      projectsList.appendChild(li);
+      ProjectsList.appendChild(li);
     });
   }
   if (Skills.length) {
@@ -83,7 +112,7 @@ window.addEventListener("DOMContentLoaded", function () {
           <div class="skill-progress-fill" style="width: ${skill.percentage}%"></div>
         </div>
       `;
-      skillList.appendChild(li);
+      SkillList.appendChild(li);
     });
   }
   if (Services.length) {
@@ -101,11 +130,88 @@ window.addEventListener("DOMContentLoaded", function () {
           </p>
         </div>
       `;
-      serviceList.appendChild(li);
+      ServiceList.appendChild(li);
     });
   }
+  if (Blog.length) {
+    Blog.map((blog) => {
+      const { Title, Author, Date, Year, Link, Image, Description } = blog;
+      const li = document.createElement("li");
+      li.classList.add("blog-post-item");
+      li.innerHTML = `
+           <a href="${Link}">
+                  <figure class="blog-banner-box">
+                    <img src="${Image}" alt="${Title}" loading="lazy" />
+                  </figure>
+                  <div class="blog-content">
+                    <div class="blog-meta">
+                      <p class="blog-category">${Title}</p>
+                      <span class="dot"></span>
+                      <time datetime="${Date}">${Year}</time>
+                    </div>
+                    <h3 class="h3 blog-item-title">${Author}</h3>
+                    <p class="blog-text">${Description}</p>
+                  </div>
+                </a>
+      `;
+      BlogList.appendChild(li);
+    });
+  }
+  if (SEO) {
+    SetSEOMetaTags(SEO);
+  }
 });
-
+function SetSEOMetaTags(SEO) {
+  if (!SEO) return;
+  const {
+    Title,
+    Description,
+    Image,
+    Url,
+    Type,
+    Locale,
+    SiteName,
+    Keywords,
+    TwitterHandle,
+  } = SEO;
+  const metaTags = {
+    title: Title,
+    description: Description,
+    keywords: Keywords.join(", "),
+    "og:title": Title || "Sabry Dawood",
+    "og:description":
+      Description ||
+      "Lead Software Engineer | Backend Engineer | Frontend Engineer",
+    "og:image": Image,
+    "og:url": Url || "https://sabrydev.vercel.app/",
+    "og:type": Type || "website",
+    "og:locale": Locale || "en_US",
+    "og:site_name": SiteName || "Sabry Dawood",
+    "twitter:card": "summary_large_image",
+    "twitter:title": Title || "Sabry Dawood",
+    "twitter:description":
+      Description ||
+      "Lead Software Engineer | Backend Engineer | Frontend Engineer",
+    "twitter:image": Image,
+    "twitter:site": TwitterHandle || "@sabry_dawood79",
+  };
+  document.title = Title;
+  Object.keys(metaTags).forEach((name) => {
+    let meta = document.querySelector(
+      `meta[name='${name}'], meta[property='${name}']`
+    );
+    if (!meta) {
+      meta = document.createElement("meta");
+      if (name.startsWith("og:") || name.startsWith("twitter:")) {
+        meta.setAttribute("property", name);
+      } else {
+        meta.setAttribute("name", name);
+      }
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", metaTags[name]);
+  });
+}
 const pages = document.querySelectorAll("[data-page]");
 function handleToggleNavigation(page) {
   NavbBarButtons.map((button, index) => {
@@ -123,13 +229,6 @@ function handleToggleNavigation(page) {
       pageItem.classList.remove("active");
     }
   });
-  // const isHavePage = pages.find((pageItem) => pageItem.dataset.page === page);
-  // console.log({ isHavePage });
-  // if (isHavePage) {
-  //   navigationLinks[0].classList.add("active");
-  //   navigationLinks[1].classList.remove("active");
-  //   navigationLinks[2].classList.remove("active");
-  // }
 }
 // element toggle function
 const elementToggleFunc = function (elem) {
